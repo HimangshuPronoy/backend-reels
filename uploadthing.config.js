@@ -1,4 +1,4 @@
-const { createUploadthing } = require("@uploadthing/server");
+const { createUploadthing } = require("uploadthing/server");
 
 const f = createUploadthing();
 

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { createRouteHandler } = require('uploadthing/server');
+const { createNextRouteHandler } = require('uploadthing/server');
 const { uploadRouter } = require('./uploadthing.config');
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(express.json({ limit: '50mb' }));
 // UploadThing routes
 app.use(
   '/api/uploadthing',
-  createRouteHandler({
+  createNextRouteHandler({
     router: uploadRouter,
     config: {
       uploadthingSecret: process.env.UPLOADTHING_SECRET,
