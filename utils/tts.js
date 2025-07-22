@@ -1,4 +1,4 @@
-const ElevenLabs = require('elevenlabs-node');
+const { ElevenLabsClient } = require('elevenlabs');
 const { UTApi } = require('uploadthing/server');
 require('dotenv').config();
 
@@ -7,8 +7,8 @@ const utapi = new UTApi({
 });
 
 // Initialize ElevenLabs client
-const elevenlabs = new ElevenLabs({
-  apiKey: process.env.ELEVENLABS_API_KEY,
+const elevenlabs = new ElevenLabsClient({
+  apiKey: process.env.ELEVENLABS_API_KEY
 });
 
 // Voice IDs for male/female voices
@@ -23,13 +23,17 @@ async function generateVoiceover(text, sessionId, gender = 'male') {
     const voiceId = VOICES[gender.toLowerCase()] || VOICES.male;
     
     // Generate speech
-    const audioBuffer = await elevenlabs.textToSpeech({
-      voiceId: voiceId,
-      textInput: text,
-      stability: 0.5,
-      similarityBoost: 0.5,
-      modelId: 'eleven_english_sts_v2'
+    const audio = await elevenlabs.generate({
+      voice: voiceId,
+      text: text,
+      model_id: 'eleven_english_sts_v2',
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.5
+      }
     });
+    
+    const audioBuffer = Buffer.from(await audio.arrayBuffer());
 
     // Upload to UploadThing
     const fileName = `voiceover-${sessionId}.mp3`;
